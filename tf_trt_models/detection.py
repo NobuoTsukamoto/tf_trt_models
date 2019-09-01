@@ -39,7 +39,7 @@ MODELS = {
         'ssd_mobilenet_v1_0.75_depth_300x300_coco14_sync_2018_07_03',
     ),
     'ssd_mobilenet_v1_fpn_coco': DetectionModel(
-        'ssd_mobilenet_v1_0.75_depth_coco',
+        'ssd_mobilenet_v1_fpn_coco',
         'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync_2018_07_03.tar.gz',
         'ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync_2018_07_03',
     ),
