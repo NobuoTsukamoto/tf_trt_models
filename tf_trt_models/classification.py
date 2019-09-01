@@ -25,16 +25,21 @@ def _mobilenet_v1_1p0_224(*args, **kwargs):
     kwargs['depth_multiplier'] = 1.0
     return nets.mobilenet_v1.mobilenet_v1(*args, **kwargs)
 
-
 def _mobilenet_v1_0p5_160(*args, **kwargs):
     kwargs['depth_multiplier'] = 0.5
     return nets.mobilenet_v1.mobilenet_v1(*args, **kwargs)
-
 
 def _mobilenet_v1_0p25_128(*args, **kwargs):
     kwargs['depth_multiplier'] = 0.25
     return nets.mobilenet_v1.mobilenet_v1(*args, **kwargs)
 
+def _mobilenet_v2_1p0_224(*args, **kwargs):
+    kwargs['depth_multiplier'] = 1.0
+    return nets.moblienet.mobilenet_v2.mobilenet(*args, **kwargs)
+
+def _mobilenet_v2_1p4_224(*args, **kwargs):
+    kwargs['depth_multiplier'] = 1.4
+    return nets.moblienet.mobilenet_v2.mobilenet(*args, **kwargs)
 
 def _preprocess_vgg(x):
     tf_x_float = tf.cast(x, tf.float32)
@@ -66,6 +71,16 @@ NETS = {
            224, 224, _preprocess_inception, tf.nn.softmax,
            'http://download.tensorflow.org/models/mobilenet_v1_2018_02_22/mobilenet_v1_1.0_224.tgz',
            'mobilenet_v1_1.0_224.ckpt', 1001),
+    'mobilenet_v2_1p0_224':
+    NetDef(_mobilenet_v2_1p0_224, nets.moblienet.mobilenet_v2.training_scope,
+           224, 224, _preprocess_inception, tf.nn.softmax,
+           'https://storage.googleapis.com/mobilenet_v2/checkpoints/mobilenet_v2_1.0_224.tgz',
+           'mobilenet_v2_1.0_224.ckpt', 1001),
+    'mobilenet_v2_1p4_224':
+    NetDef(_mobilenet_v2_1p4_224, nets.moblienet.mobilenet_v2.training_scope,
+           224, 224, _preprocess_inception, tf.nn.softmax,
+           'https://storage.googleapis.com/mobilenet_v2/checkpoints/mobilenet_v2_1.4_224.tgz',
+           'mobilenet_v2_1.4_224.ckpt', 1001),
     'vgg_16':
     NetDef(nets.vgg.vgg_16, nets.vgg.vgg_arg_scope, 224, 224,
            _preprocess_vgg, tf.nn.softmax,
@@ -166,7 +181,7 @@ def download_classification_checkpoint(model, output_dir='.'):
     return checkpoint_path
 
 
-def build_classification_graph(model, checkpoint, num_classes):
+def build_classification_graph(model, checkpoint, num_classes, is_remove_relu6=True):
     """Builds an image classification model by name
 
     This function builds an image classification model given a model
@@ -215,7 +230,8 @@ def build_classification_graph(model, checkpoint, num_classes):
                 output_node_names=[output_name]
             )
 
-            # remove relu 6
-            frozen_graph = convert_relu6(frozen_graph)
+            if is_remove_relu6 == True:
+                # remove relu 6
+                frozen_graph = convert_relu6(frozen_graph)
 
     return frozen_graph, [input_name], [output_name]
