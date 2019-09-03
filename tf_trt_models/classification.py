@@ -3,11 +3,13 @@ from collections import namedtuple
 from .graph_utils import convert_relu6
 
 import nets
+import nets.mobilenet
 import nets.inception
 import nets.mobilenet_v1
 import nets.resnet_v1
 import nets.resnet_v2
 import nets.vgg
+from nets.mobilenet import mobilenet_v2
 
 import os
 import subprocess
@@ -35,11 +37,11 @@ def _mobilenet_v1_0p25_128(*args, **kwargs):
 
 def _mobilenet_v2_1p0_224(*args, **kwargs):
     kwargs['depth_multiplier'] = 1.0
-    return nets.moblienet.mobilenet_v2.mobilenet(*args, **kwargs)
+    return mobilenet_v2.mobilenet(*args, **kwargs)
 
 def _mobilenet_v2_1p4_224(*args, **kwargs):
     kwargs['depth_multiplier'] = 1.4
-    return nets.moblienet.mobilenet_v2.mobilenet(*args, **kwargs)
+    return mobilenet_v2.mobilenet(*args, **kwargs)
 
 def _preprocess_vgg(x):
     tf_x_float = tf.cast(x, tf.float32)
@@ -72,12 +74,12 @@ NETS = {
            'http://download.tensorflow.org/models/mobilenet_v1_2018_02_22/mobilenet_v1_1.0_224.tgz',
            'mobilenet_v1_1.0_224.ckpt', 1001),
     'mobilenet_v2_1p0_224':
-    NetDef(_mobilenet_v2_1p0_224, nets.moblienet.mobilenet_v2.training_scope,
+    NetDef(_mobilenet_v2_1p0_224, mobilenet_v2.training_scope,
            224, 224, _preprocess_inception, tf.nn.softmax,
            'https://storage.googleapis.com/mobilenet_v2/checkpoints/mobilenet_v2_1.0_224.tgz',
            'mobilenet_v2_1.0_224.ckpt', 1001),
     'mobilenet_v2_1p4_224':
-    NetDef(_mobilenet_v2_1p4_224, nets.moblienet.mobilenet_v2.training_scope,
+    NetDef(_mobilenet_v2_1p4_224, mobilenet_v2.training_scope,
            224, 224, _preprocess_inception, tf.nn.softmax,
            'https://storage.googleapis.com/mobilenet_v2/checkpoints/mobilenet_v2_1.4_224.tgz',
            'mobilenet_v2_1.4_224.ckpt', 1001),

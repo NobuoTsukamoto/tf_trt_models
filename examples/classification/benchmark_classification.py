@@ -16,7 +16,7 @@ import os
 import time
 
 import tensorflow as tf
-from tensorflow.python.compiler.tensorrt import trt
+# from tensorflow.python.compiler.tensorrt import trt
 
 import numpy as np
 
@@ -57,9 +57,13 @@ def main():
     image = np.array(image.resize((width, height)))
 
     times = []
-    for i in range(arg.count):
+    for i in range(args.count + 1):
         start_tm = time.time()
         tf_sess.run(tf_output, feed_dict={tf_input: image[None, ...]})
-        times.append(time.time() - start_tm)
+        if i > 0:
+            times.append(time.time() - start_tm)
     
     print('Inference : {0:.2f} ms'.format(np.array(times).mean() * 1000))        
+
+if __name__ == "__main__":
+    main()
