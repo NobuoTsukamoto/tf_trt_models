@@ -16,7 +16,7 @@ import os
 import time
 
 import tensorflow as tf
-# from tensorflow.python.compiler.tensorrt import trt
+from tensorflow.python.compiler.tensorrt import trt
 
 import numpy as np
 
@@ -62,8 +62,10 @@ def main():
         tf_sess.run(tf_output, feed_dict={tf_input: image[None, ...]})
         if i > 0:
             times.append(time.time() - start_tm)
-    
-    print('Inference : {0:.2f} ms'.format(np.array(times).mean() * 1000))        
+        else:
+            print('First Inference : {0:.2f} ms'.format((time.time() - start_tm)* 1000))
 
+    print('Inference : {0:.2f} ms'.format(np.array(times).mean() * 1000))
+    
 if __name__ == "__main__":
     main()
