@@ -180,7 +180,7 @@ def download_classification_checkpoint(model, output_dir='.'):
     if not os.path.isfile(checkpoint_path):
         subprocess.call(['tar', '-xzf', modeltar_path, '-C', modeldir_path])
 
-    return checkpoint_path
+    return checkpoint_path, NETS[model].num_classes
 
 
 def build_classification_graph(model, checkpoint, num_classes, is_remove_relu6=True):
@@ -233,6 +233,7 @@ def build_classification_graph(model, checkpoint, num_classes, is_remove_relu6=T
             )
 
             if is_remove_relu6 == True:
+                print('remove relu6!!!')
                 # remove relu 6
                 frozen_graph = convert_relu6(frozen_graph)
 

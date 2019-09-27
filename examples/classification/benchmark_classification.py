@@ -17,6 +17,7 @@ import time
 
 import tensorflow as tf
 from tensorflow.python.compiler.tensorrt import trt
+# import tensorflow.contrib.tensorrt as trt
 
 import numpy as np
 
@@ -60,10 +61,12 @@ def main():
     for i in range(args.count + 1):
         start_tm = time.time()
         tf_sess.run(tf_output, feed_dict={tf_input: image[None, ...]})
+        end_tm = time.time()
+
         if i > 0:
-            times.append(time.time() - start_tm)
+            times.append(end_tm - start_tm)
         else:
-            print('First Inference : {0:.2f} ms'.format((time.time() - start_tm)* 1000))
+            print('First Inference : {0:.2f} ms'.format((end_tm - start_tm)* 1000))
 
     print('Inference : {0:.2f} ms'.format(np.array(times).mean() * 1000))
     
