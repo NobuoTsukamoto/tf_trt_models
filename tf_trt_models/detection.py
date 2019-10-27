@@ -53,6 +53,16 @@ MODELS = {
         'http://download.tensorflow.org/models/object_detection/ssdlite_mobilenet_v2_coco_2018_05_09.tar.gz',
         'ssdlite_mobilenet_v2_coco_2018_05_09',
     ),
+    'ssdlite_mobilenet_v3_large_coco': DetectionModel(
+        'ssd_mobilenet_v3_large_coco',
+        'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v3_large_coco_2019_08_14.tar.gz',
+        'ssd_mobilenet_v3_large_coco_2019_08_14',
+    ),
+    'ssdlite_mobilenet_v3_small_coco': DetectionModel(
+        'ssd_mobilenet_v3_small_coco',
+        'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v3_small_coco_2019_08_14.tar.gz',
+        'ssd_mobilenet_v3_small_coco_2019_08_14',
+    ),
     'ssd_inception_v2_coco': DetectionModel(
         'ssd_inception_v2_coco',
         'http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2018_01_28.tar.gz',
@@ -132,7 +142,7 @@ def download_detection_model(model, output_dir='.'):
 
     if not os.path.exists(os.path.join(output_dir, model.extract_dir)):
         subprocess.call(['wget', model.url, '-O', tar_file])
-        subprocess.call(['tar', '-xzf', tar_file, '-C', output_dir])
+        subprocess.call(['tar', 'xf', tar_file, '-C', output_dir])
 
         # hack fix to handle mobilenet_v2 config bug
         subprocess.call(['sed', '-i', '/batch_norm_trainable/d', config_path])
@@ -144,7 +154,7 @@ def build_detection_graph(config, checkpoint,
         batch_size=1,
         score_threshold=None,
         force_nms_cpu=True,
-        replace_relu6=True,
+        replace_relu6=False,
         remove_assert=True,
         input_shape=None,
         output_dir='.generated_model'):
