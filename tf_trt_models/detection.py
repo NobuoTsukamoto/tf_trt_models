@@ -55,13 +55,13 @@ MODELS = {
     ),
     'ssdlite_mobilenet_v3_large_coco': DetectionModel(
         'ssd_mobilenet_v3_large_coco',
-        'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v3_large_coco_2019_08_14.tar.gz',
-        'ssd_mobilenet_v3_large_coco_2019_08_14',
+        'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v3_large_coco_2020_01_14.tar.gz',
+        'ssd_mobilenet_v3_large_coco_2020_01_14',
     ),
     'ssdlite_mobilenet_v3_small_coco': DetectionModel(
         'ssd_mobilenet_v3_small_coco',
-        'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v3_small_coco_2019_08_14.tar.gz',
-        'ssd_mobilenet_v3_small_coco_2019_08_14',
+        'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v3_small_coco_2020_01_14.tar.gz',
+        'ssd_mobilenet_v3_small_coco_2020_01_14',
     ),
     'ssd_inception_v2_coco': DetectionModel(
         'ssd_inception_v2_coco',
