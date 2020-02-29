@@ -14,11 +14,15 @@ import argparse
 import sys
 import os
 import time
+import colorsys
+import random
+
+import cv2
+
+import numpy as np
 
 import tensorflow as tf
 from tensorflow.python.compiler.tensorrt import trt
-
-import numpy as np
 
 WINDOW_NAME = "Jetson Nano TF-TRT Object detection(OpenCV)"
 
@@ -83,9 +87,10 @@ def main():
     # parse args.
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', help='File path of tf-trt model.', required=True)
+    parser.add_argument('--label', help='File path of label.', required=True)
     parser.add_argument('--width', help='Input width.', default=640, type=int)
     parser.add_argument('--height', help='Input height.', default=480, type=int)
-    parser.add_argument("--videopath", help="File path of Videofile.", default="")
+    parser.add_argument('--videopath', help="File path of Videofile.", default='')
     args = parser.parse_args()
 
     # Initialize window.
@@ -97,7 +102,7 @@ def main():
     # Read label file and generate random colors.
     labels = ReadLabelFile(args.label) if args.label else None
     last_key = sorted(labels.keys())[len(labels.keys()) - 1]
-    colors = visual.random_colors(last_key)
+    colors = random_colors(last_key)
 
     # Load graph.
     tf.reset_default_graph()
@@ -122,7 +127,7 @@ def main():
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.width)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.height)
     else:
-        print('Open videl file: ', args.videopath)
+        print('Open video file: ', args.videopath)
         cap = cv2.VideoCapture(args.videopath)
 
     elapsed_list = []
@@ -138,16 +143,24 @@ def main():
         })
         elapsed_ms = (time.time() - start_tm) * 1000
 
+        boxes = boxes[0] # index by 0 to remove batch dimension
+        scores = scores[0]
+        classes = classes[0]
+        num_detections = num_detections[0]
+
         # plot boxes exceeding score threshold
-        for i in range(num_detections):
-            # scale box to image coordinates
-            box = boxes[i] * np.array([image.shape[0], image.shape[1], image.shape[0], image.shape[1]])
+        for i in range(int(num_detections)):
+            if scores[i] >= 0.5:
+                # scale box to image coordinates
+                box = boxes[i] * np.array([image.shape[0], image.shape[1], image.shape[0], image.shape[1]])
 
-            # display rectangle
-            draw_rectangle(frame, box, colors(classes[i]))
+                # display rectangle
+                box = (box[1], box[0], box[3], box[2])
+                draw_rectangle(frame, box, colors[int(classes[i]) - 1])
 
-            # display class name and score
-            caption = "{0}({1:.2f})".format(labels[classes[i]], scores[i])
+                # display class name and score
+                caption = "{0}({1:.2f})".format(labels[int(classes[i]) - 1], scores[i])
+                draw_caption(frame, box, caption)
 
         # Calc fps.
         elapsed_list.append(elapsed_ms)
@@ -159,7 +172,7 @@ def main():
 
         # Display fps
         fps_text = "{0:.2f}ms".format(elapsed_ms)
-        visual.draw_caption(frame, (10, 30), fps_text + avg_text)
+        draw_caption(frame, (10, 30), fps_text + avg_text)
 
         # display
         cv2.imshow(WINDOW_NAME, frame)
