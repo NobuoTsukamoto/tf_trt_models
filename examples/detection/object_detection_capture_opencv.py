@@ -91,7 +91,10 @@ def main():
     parser.add_argument('--width', help='Input width.', default=640, type=int)
     parser.add_argument('--height', help='Input height.', default=480, type=int)
     parser.add_argument('--videopath', help="File path of Videofile.", default='')
+<<<<<<< HEAD
     parser.add_argument("--output", help="File path of result.", default="")
+=======
+>>>>>>> 97c49c4f0b441d8a4c7d505f6b01d25736c8235a
     args = parser.parse_args()
 
     # Initialize window.
@@ -188,12 +191,17 @@ def main():
             avg_text = " AGV: {0:.2f}ms".format(avg_elapsed_ms)
 
         # Display fps
+<<<<<<< HEAD
         fps_text = "Inference: {0:.2f}ms".format(elapsed_ms)
         draw_caption(frame, (10, 30),  model_name + ' ' + fps_text + avg_text)
 
         # Output video file
         if video_writer != None:
             video_writer.write(frame)
+=======
+        fps_text = "{0:.2f}ms".format(elapsed_ms)
+        draw_caption(frame, (10, 30), fps_text + avg_text)
+>>>>>>> 97c49c4f0b441d8a4c7d505f6b01d25736c8235a
 
         # display
         cv2.imshow(WINDOW_NAME, frame)
