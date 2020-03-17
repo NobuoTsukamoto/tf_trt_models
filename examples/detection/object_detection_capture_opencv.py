@@ -14,11 +14,15 @@ import argparse
 import sys
 import os
 import time
+import colorsys
+import random
+
+import cv2
+
+import numpy as np
 
 import tensorflow as tf
 from tensorflow.python.compiler.tensorrt import trt
-
-import numpy as np
 
 WINDOW_NAME = "Jetson Nano TF-TRT Object detection(OpenCV)"
 
@@ -83,9 +87,11 @@ def main():
     # parse args.
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', help='File path of tf-trt model.', required=True)
+    parser.add_argument('--label', help='File path of label.', required=True)
     parser.add_argument('--width', help='Input width.', default=640, type=int)
     parser.add_argument('--height', help='Input height.', default=480, type=int)
-    parser.add_argument("--videopath", help="File path of Videofile.", default="")
+    parser.add_argument('--videopath', help="File path of Videofile.", default='')
+    parser.add_argument("--output", help="File path of result.", default="")
     args = parser.parse_args()
 
     # Initialize window.
@@ -95,9 +101,10 @@ def main():
     cv2.moveWindow(WINDOW_NAME, 100, 200)
 
     # Read label file and generate random colors.
+    random.seed(42)
     labels = ReadLabelFile(args.label) if args.label else None
     last_key = sorted(labels.keys())[len(labels.keys()) - 1]
-    colors = visual.random_colors(last_key)
+    colors = random_colors(last_key)
 
     # Load graph.
     tf.reset_default_graph()
@@ -122,13 +129,28 @@ def main():
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.width)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.height)
     else:
-        print('Open videl file: ', args.videopath)
+        print('Open video file: ', args.videopath)
         cap = cv2.VideoCapture(args.videopath)
+        w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        fps = cap.get(cv2.CAP_PROP_FPS)
 
     elapsed_list = []
 
+    # Output Video file
+    # Define the codec and create VideoWriter object
+    model_name = os.path.splitext(os.path.basename(args.model))[0]
+    video_writer = None
+    if args.output != '' :
+        fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+        video_writer = cv2.VideoWriter(args.output, fourcc, fps, (w, h))
+
     while(cap.isOpened()):
-        _, frame = cap.read()
+        ret, frame = cap.read()
+        if ret == False:
+            print('VideoCapture read return false.')
+            break
+
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         # Run inference.        
@@ -138,16 +160,24 @@ def main():
         })
         elapsed_ms = (time.time() - start_tm) * 1000
 
+        boxes = boxes[0] # index by 0 to remove batch dimension
+        scores = scores[0]
+        classes = classes[0]
+        num_detections = num_detections[0]
+
         # plot boxes exceeding score threshold
-        for i in range(num_detections):
-            # scale box to image coordinates
-            box = boxes[i] * np.array([image.shape[0], image.shape[1], image.shape[0], image.shape[1]])
+        for i in range(int(num_detections)):
+            if scores[i] >= 0.5:
+                # scale box to image coordinates
+                box = boxes[i] * np.array([image.shape[0], image.shape[1], image.shape[0], image.shape[1]])
 
-            # display rectangle
-            draw_rectangle(frame, box, colors(classes[i]))
+                # display rectangle
+                box = (box[1], box[0], box[3], box[2])
+                draw_rectangle(frame, box, colors[int(classes[i]) - 1])
 
-            # display class name and score
-            caption = "{0}({1:.2f})".format(labels[classes[i]], scores[i])
+                # display class name and score
+                caption = "{0}({1:.2f})".format(labels[int(classes[i]) - 1], scores[i])
+                draw_caption(frame, box, caption)
 
         # Calc fps.
         elapsed_list.append(elapsed_ms)
@@ -158,8 +188,12 @@ def main():
             avg_text = " AGV: {0:.2f}ms".format(avg_elapsed_ms)
 
         # Display fps
-        fps_text = "{0:.2f}ms".format(elapsed_ms)
-        visual.draw_caption(frame, (10, 30), fps_text + avg_text)
+        fps_text = "Inference: {0:.2f}ms".format(elapsed_ms)
+        draw_caption(frame, (10, 30),  model_name + ' ' + fps_text + avg_text)
+
+        # Output video file
+        if video_writer != None:
+            video_writer.write(frame)
 
         # display
         cv2.imshow(WINDOW_NAME, frame)
@@ -167,6 +201,9 @@ def main():
             break
 
     # When everything done, release the window
+    cap.release()
+    if video_writer != None:
+        video_writer.release()
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
