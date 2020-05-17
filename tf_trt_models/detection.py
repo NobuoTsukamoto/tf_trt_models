@@ -63,6 +63,11 @@ MODELS = {
         'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v3_small_coco_2020_01_14.tar.gz',
         'ssd_mobilenet_v3_small_coco_2020_01_14',
     ),
+    'ssd_mobilenet_v2_mnasfpn_coco': DetectionModel(
+        'ssd_mobilenet_v2_mnasfpn_coco',
+        'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_mnasfpn_shared_box_predictor_320x320_coco_sync_2020_05_06.tar.gz',
+        'ssd_mobilenet_v2_mnasfpn_shared_box_predictor_320x320_coco_sync_2020_05_06',
+    ),
     'ssd_inception_v2_coco': DetectionModel(
         'ssd_inception_v2_coco',
         'http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2018_01_28.tar.gz',
