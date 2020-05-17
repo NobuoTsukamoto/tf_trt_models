@@ -53,7 +53,8 @@ def main():
 
     frozen_graph, input_names, output_names = build_detection_graph(
         config=config_path,
-        force_nms_cpu=True,
+        # force_nms_cpu=True,
+        force_nms_cpu=False,
         checkpoint=checkpoint_path,
         batch_size=1
     )
