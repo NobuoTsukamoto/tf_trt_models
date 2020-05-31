@@ -15,7 +15,7 @@ import sys
 import os
 import urllib
 import time
-import tensorflow.contrib.slim as slim
+import tf_slim as slim
 import numpy as np
 
 import tensorflow as tf
@@ -29,6 +29,7 @@ def main():
     parser.add_argument('--model', help='tf-trt model.')
     parser.add_argument('--path', help='path to checkpoint dir.')
     parser.add_argument('--output', help='Output dir.', default='model')
+    parser.add_argument('--force_nms_cpu', help='Force NMS CPU', default=True, type=bool)
     parser.add_argument('--threshold', help='Score threshold', default=0.5, type=float)
     args = parser.parse_args()
 
@@ -53,8 +54,7 @@ def main():
 
     frozen_graph, input_names, output_names = build_detection_graph(
         config=config_path,
-        # force_nms_cpu=True,
-        force_nms_cpu=False,
+        force_nms_cpu=args.force_nms_cpu,
         checkpoint=checkpoint_path,
         batch_size=1
     )
