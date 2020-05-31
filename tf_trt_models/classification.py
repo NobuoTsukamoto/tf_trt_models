@@ -16,7 +16,8 @@ import subprocess
 import tarfile
 
 import tensorflow as tf
-import tensorflow.contrib.slim as slim
+# import tensorflow.contrib.slim as slim
+import tf_slim as slim
 
 NetDef = namedtuple('NetDef', ['model', 'arg_scope', 'input_width',
                     'input_height', 'preprocess', 'postprocess', 'url', 'checkpoint_name',
