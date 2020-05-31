@@ -9,6 +9,7 @@ from collections import namedtuple
 from google.protobuf import text_format
 
 import tensorflow as tf
+import tf_slim as slim
 
 from .graph_utils import force_nms_cpu as f_force_nms_cpu
 from .graph_utils import replace_relu6 as f_replace_relu6
@@ -75,8 +76,8 @@ MODELS = {
     ),
     'ssd_resnet_50_fpn_coco': DetectionModel(
         'ssd_resnet_50_fpn_coco',
-        'http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz',
-        'faster_rcnn_inception_v2_coco_2018_01_28',
+        'http://download.tensorflow.org/models/object_detection/ssd_resnet50_v1_fpn_shared_box_predictor_640x640_coco14_sync_2018_07_03.tar.gz',
+        'ssd_resnet50_v1_fpn_shared_box_predictor_640x640_coco14_sync_2018_07_03',
     ),
     'faster_rcnn_inception_v2_coco': DetectionModel(
         'faster_rcnn_inception_v2_coco',
