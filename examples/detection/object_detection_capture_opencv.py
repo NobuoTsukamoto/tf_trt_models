@@ -150,8 +150,6 @@ def main():
 
     while(cap.isOpened()):
         ret, frame = cap.read()
-        # for i in range(5):
-        #     ret, frame = cap.read()
         if ret == False:
             print('VideoCapture read return false.')
             break
