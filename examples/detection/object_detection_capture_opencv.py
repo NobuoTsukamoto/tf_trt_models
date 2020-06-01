@@ -129,7 +129,7 @@ def main():
             ! video/x-raw(memory:NVMM), width={0:d}, height={1:d}, format=(string)NV12, framerate=(fraction)30/1 \
             ! nvvidconv flip-method=2 !  video/x-raw, width=(int){2:d}, height=(int){3:d}, format=(string)BGRx \
             ! videoconvert \
-            ! appsink'.format(1280, 720, args.width, args.height)
+            ! appsink drop=true sync=false'.format(1280, 720, args.width, args.height)
         cap = cv2.VideoCapture(GST_STR, cv2.CAP_GSTREAMER)
     else:
         print('Open video file: ', args.videopath)
@@ -149,9 +149,9 @@ def main():
         video_writer = cv2.VideoWriter(args.output, fourcc, fps, (w, h))
 
     while(cap.isOpened()):
-        # ret, frame = cap.read()
-        for i in range(5):
-            ret, frame = cap.read()
+        ret, frame = cap.read()
+        # for i in range(5):
+        #     ret, frame = cap.read()
         if ret == False:
             print('VideoCapture read return false.')
             break
