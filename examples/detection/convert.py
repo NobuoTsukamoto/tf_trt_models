@@ -29,7 +29,7 @@ def main():
     parser.add_argument('--model', help='tf-trt model.')
     parser.add_argument('--path', help='path to checkpoint dir.')
     parser.add_argument('--output', help='Output dir.', default='model')
-    parser.add_argument('--force_nms_cpu', help='Force NMS CPU', default=True, type=bool)
+    parser.add_argument('--force_nms_cpu', help='Force NMS CPU', action='store_true')
     parser.add_argument('--threshold', help='Score threshold', default=0.5, type=float)
     args = parser.parse_args()
 
