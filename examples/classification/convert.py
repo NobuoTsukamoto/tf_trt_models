@@ -34,7 +34,7 @@ def main():
         model=args.model,
         checkpoint=checkpoint_path,
         num_classes=num_classes,
-        is_remove_relu6=True)
+        is_remove_relu6=False)
     print(input_names, output_names, num_classes)
 
     converter = trt.TrtGraphConverter(
