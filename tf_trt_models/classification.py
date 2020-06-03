@@ -37,6 +37,11 @@ def _mobilenet_v1_0p25_128(*args, **kwargs):
     kwargs['depth_multiplier'] = 0.25
     return nets.mobilenet_v1.mobilenet_v1(*args, **kwargs)
 
+def _mobilenet_v2_0p5_224(*args, **kwargs):
+    kwargs['depth_multiplier'] = 0.5
+    kwargs['finegrain_classification_mode'] = True
+    return mobilenet_v2.mobilenet(*args, **kwargs)
+
 def _mobilenet_v2_1p0_224(*args, **kwargs):
     kwargs['depth_multiplier'] = 1.0
     return mobilenet_v2.mobilenet(*args, **kwargs)
@@ -45,8 +50,14 @@ def _mobilenet_v2_1p4_224(*args, **kwargs):
     kwargs['depth_multiplier'] = 1.4
     return mobilenet_v2.mobilenet(*args, **kwargs)
 
+def _mobilenet_v3_small_224(*args, **kwargs):
+    kwargs['depth_multiplier'] = 1.0
+    kwargs['conv_defs'] = mobilenet_v3.V3_SMALL
+    return mobilenet_v3.mobilenet(*args, **kwargs)
+
 def _mobilenet_v3_large_224(*args, **kwargs):
     kwargs['depth_multiplier'] = 1.0
+    kwargs['conv_defs'] = mobilenet_v3.V3_LARGE
     return mobilenet_v3.mobilenet(*args, **kwargs)
 
 def _preprocess_vgg(x):
@@ -79,16 +90,26 @@ NETS = {
            224, 224, _preprocess_inception, tf.nn.softmax,
            'http://download.tensorflow.org/models/mobilenet_v1_2018_02_22/mobilenet_v1_1.0_224.tgz',
            'mobilenet_v1_1.0_224.ckpt', 1001),
+    'mobilenet_v2_0p5_224':
+    NetDef(_mobilenet_v2_0p5_224, mobilenet_v2.training_scope,
+           224, 224, _preprocess_inception, tf.nn.softmax,
+           'https://storage.googleapis.com/mobilenet_v2/checkpoints/mobilenet_v2_0.5_224.tgz',
+           'mobilenet_v2_0.5_224.ckpt', 1001),
     'mobilenet_v2_1p0_224':
     NetDef(_mobilenet_v2_1p0_224, mobilenet_v2.training_scope,
            224, 224, _preprocess_inception, tf.nn.softmax,
            'https://storage.googleapis.com/mobilenet_v2/checkpoints/mobilenet_v2_1.0_224.tgz',
            'mobilenet_v2_1.0_224.ckpt', 1001),
     'mobilenet_v2_1p4_224':
-    NetDef(_mobilenet_v2_1p0_224, mobilenet_v2.training_scope,
+    NetDef(_mobilenet_v2_1p4_224, mobilenet_v2.training_scope,
            224, 224, _preprocess_inception, tf.nn.softmax,
-           'https://storage.googleapis.com/mobilenet_v2/checkpoints/mobilenet_v2_1.0_224.tgz',
-           'mobilenet_v2_1.0_224.ckpt', 1001),
+           'https://storage.googleapis.com/mobilenet_v2/checkpoints/mobilenet_v2_1.4_224.tgz',
+           'mobilenet_v2_1.4_224.ckpt', 1001),
+    'mobilenet_v3_small_224':
+    NetDef(_mobilenet_v3_small_224, mobilenet_v3.training_scope,
+           224, 224, _preprocess_inception, tf.nn.softmax,
+           'https://storage.googleapis.com/mobilenet_v3/checkpoints/v3-small_224_1.0_float.tgz',
+           'v3-small_224_1.0_float/pristine/model.ckpt-388500', 1001),
     'mobilenet_v3_large_224':
     NetDef(_mobilenet_v3_large_224, mobilenet_v3.training_scope,
            224, 224, _preprocess_inception, tf.nn.softmax,
